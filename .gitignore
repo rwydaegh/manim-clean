@@ -1,0 +1,5 @@
+# Ignore generated media files
+media/
+
+# Ignore generated slide files
+slides/

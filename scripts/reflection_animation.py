@@ -44,9 +44,9 @@ class ReflectionAnimation(Scene):
         incident_wave_color = BLUE
         reflected_wave_color = RED
         normal_color = GREEN
-        ray_color_incident = RED_D
+        ray_color_incident = BLUE_D
         ray_color_reflected = RED_D
-        current_density_color = RED
+        current_density_color = GREEN
         wave_stroke_width = 2
         stage1_duration = 7
         stage2_duration = 2
@@ -71,7 +71,7 @@ class ReflectionAnimation(Scene):
         wall = Line(start=wall_start_new, end=wall_end_new, color=BLACK, stroke_width=3)
         wall_start = wall.get_start()
         wall_end = wall.get_end()
-        wall_label = Text("Wall", font_size=30, color=BLACK).next_to(wall.get_center(), UR, buff=0.2)
+        wall_label = Text("Wall", font_size=30, color=BLACK).next_to(wall.get_center(), UR * 1, buff=0.7)
         self.add(title, wall, wall_label)
 
         # --- Wave Simulation ---
@@ -237,11 +237,17 @@ class ReflectionAnimation(Scene):
                 # Use the normalized wall direction vector calculated earlier
                 # wall_vector = normalize(wall_end - wall_start) # Already available
 
+                ii = -1
                 for i, point in enumerate(unique_reflection_points):
+                    ii += 1
+                    if i % 3 != 0: # Alternate between two points
+                        ii -= 1
+                        continue
+
                     # Create a thick arrow ALONG the wall
                     arrow_direction = wall_vector # Use the wall's direction
-                    arrow_start = point - arrow_direction * 0.2 # Center arrow on point
-                    arrow_end = point + arrow_direction * 0.2
+                    arrow_start = point - arrow_direction * 0.25 # Center arrow on point
+                    arrow_end = point + arrow_direction * 0.25
                     arrow = Arrow(
                         arrow_start, arrow_end,
                         color=current_density_color,
@@ -250,12 +256,12 @@ class ReflectionAnimation(Scene):
                         max_tip_length_to_length_ratio=0.3 # Make tip smaller relative to length
                     )
                     # Create label j_1, j_2, ...
-                    label = MathTex(f"j_{{{i+1}}}(\\mathbf{{r}})", font_size=30, color=current_density_color) # Larger font
+                    label = MathTex(f"\\mathbf{{j}}_{{{ii+1}}}(\\mathbf{{r'}})", font_size=30, color=current_density_color) # Larger font
                     # Position label slightly above the arrow's center
                     label.next_to(point, RIGHT, buff=0.15)
                     # Add arrow and label directly to the group
                     current_densities_group.add(arrow, label)
-                    if i == 8:
+                    if ii >= 11:
                         break
 
                 # Fade in the entire group at once
